@@ -5,7 +5,6 @@ Austin Hunt
 """
 import hashlib
 import math
-import ascii
 
 num_hash_functions = 3
 num_bits_in_bitset = 5
@@ -30,7 +29,7 @@ hashes = {
 }
 
 
-elems_to_insert = ["A", "B", "C", "D", "E"]
+elems_to_insert = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 
 bit_set = [False for i in range(num_bits_in_bitset)]
 
@@ -41,11 +40,18 @@ def get_insertion_indices_of_elem(elem, hashes):
 
 for elem in elems_to_insert:
     insertion_indices = get_insertion_indices_of_elem(elem, hashes)
+    print(f'Insertion indices for {elem}: {insertion_indices}')
+    num_already_true = 0
     for i in insertion_indices:
         if not bit_set[i]:
             print(f'{elem} definitely not stored in bloom filter yet')
         else:
-            # can have false positives. K hash functions together may have
-            # produced the same insertion indices for two distinct elements,
-            # e.g. B (66) and L (76)
-            print(f'{elem} MIGHT be stored in bloom filter already')
+            num_already_true += 1
+        bit_set[i] = True
+
+    if len(insertion_indices) == num_already_true:
+        # can have false positives. K hash functions together may have
+        # produced the same insertion indices for two distinct elements,
+        # e.g. B (66) and L (76). meaning all insertion indices already stored
+        # true values for second insertion.
+        print(f'{elem} MIGHT be stored in bloom filter already')
