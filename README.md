@@ -24,6 +24,12 @@ However, if we encounter at least one index in our bit set where the value is st
 
 After some deeper reading, it seems that both `m` (number of bits in our bit set) and `k` (number of hash functions to use for generating insertion indices) are optimizable parameters for a given bloom filter data structure.
 
+## Optimization ideas
+
+So we know we have two parameters, `m` and `k`, that define the behavior of the data structure. It seems obvious that the closer `k` is to `m`, the more false positives the data structure will produce. For example, if `k` equaled `m`, and if each `k` produced a different value, we'd quickly set all bits in the bit set of length `m` to 1, after which all queries would return "yes, this element is in the set". The smaller `k` is in relation to `m`, the slower we approach a "fully true" bit set, which lowers our false positive rate.
+
+Also, regarding the hash functions themselves, ideally we'd want to minimize the number of false positives, which when broken down means minimizing the number of collisions produced by our hash functions, and this is really just a general goal associated with choosing good hash functions. Conceptually, it makes sense that collisions become harder to avoid once you begin modding the outputs of your hash to fit in a small shared window (i.e. the bit set).
+
 ## Time Complexity
 
 Both insertion of data into a bloom filter and querying a bloom filter are both O(k) time complexity. Why?
